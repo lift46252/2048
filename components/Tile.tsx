@@ -14,13 +14,19 @@ interface TileProps {
 export const Tile: React.FC<TileProps> = ({ value, row, col }) => {
   const darkTextColor = useThemeColor({}, "darkText");
   const lightTextColor = useThemeColor({}, "lightText");
-  const backgroundColor = useTileColor(value)
-  const color = useMemo(() => value && value > 4 ? darkTextColor : lightTextColor, [value]);
+  const backgroundColor = useTileColor(value);
+  const color = useMemo(
+    () => (value && value > 4 ? darkTextColor : lightTextColor),
+    [value],
+  );
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    top: withSpring(row * 90),
-    left: withSpring(col * 90),
-  }),[row, col]);
+  const animatedStyles = useAnimatedStyle(
+    () => ({
+      top: withSpring(row * 90),
+      left: withSpring(col * 90),
+    }),
+    [row, col],
+  );
 
   return (
     <Animated.View
@@ -33,11 +39,7 @@ export const Tile: React.FC<TileProps> = ({ value, row, col }) => {
         animatedStyles,
       ]}
     >
-      {value && (
-        <Text style={[styles.tileText, { color }]}>
-          {value}
-        </Text>
-      )}
+      {value && <Text style={[styles.tileText, { color }]}>{value}</Text>}
     </Animated.View>
   );
 };

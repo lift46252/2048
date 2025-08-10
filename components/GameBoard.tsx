@@ -7,10 +7,10 @@ import { Tile, Direction } from "@/components/types";
 import GestureRecognizer from "react-native-swipe-gestures";
 
 interface GameBoardProps {
-  tiles: Tile[];
+  tiles: Tile[][];
   score: number;
   bestScore: number;
-  onTilesChange: (newTiles: Tile[]) => void;
+  onTilesChange: (newTiles: Tile[][]) => void;
   onScoreChange: (newScore: number) => void;
 }
 
@@ -25,15 +25,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     (direction: Direction) => {
       if (!direction) return;
 
-      const mergedTiles = mergeTiles(tiles, direction);
-      const repositionedTiles = moveTiles(mergedTiles, direction);
+      const repositionedTiles = moveTiles(tiles, direction);
+      const mergedTiles = mergeTiles(repositionedTiles, direction);
 
-      if (JSON.stringify(repositionedTiles) === JSON.stringify(tiles)) return;
-      const newTiles = addRandomTile(repositionedTiles);
+      if (JSON.stringify(mergedTiles) === JSON.stringify(tiles)) return;
+      const newTiles = addRandomTile(mergedTiles);
       const newScore = newTiles.reduce<number>(
-        (acc, tile) => acc + (tile.value || 0),
+        (acc, row) =>
+          acc + row.reduce<number>((acc, tile) => acc + (tile || 0), 0),
         0,
       );
+
       onTilesChange(newTiles);
       onScoreChange(newScore);
     },
@@ -75,9 +77,16 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         }}
       >
         <View style={styles.board}>
-          {tiles.map(({ id, col, row, value }) => (
-            <TileC key={id} value={value} row={row} col={col} />
-          ))}
+          {tiles.map((rowTiles, row) =>
+            rowTiles.map((tile, col) => (
+              <TileC
+                key={`${row}-${col}`}
+                value={tile}
+                row={row}
+                col={col}
+              />
+            )),
+          )}
         </View>
       </GestureRecognizer>
     </View>

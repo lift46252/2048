@@ -1,10 +1,17 @@
-import { Tile, Direction } from "@/components/types";
+import {
+  Tile,
+  Direction,
+  EmptyTilePosition,
+  ChangedTile,
+} from "@/components/types";
 
 export const isT = <T>(value: T | undefined): value is T => value !== undefined;
 
-export const addRandomTile = (tiles: Tile[]): Tile[] => {
-  const emptyCellsIndexes = tiles
-    .map((cell, index) => (cell.value === null ? index : undefined))
+export const addRandomTile = (tiles: Tile[][]): Tile[][] => {
+  const emptyCellsIndexes: EmptyTilePosition[] = tiles
+    .reduce<
+      EmptyTilePosition[]
+    >((acc, row, index) => [...acc, ...row.map((cell, col) => (cell === null ? { row: index, col: col } : undefined)).filter(isT)], [])
     .filter(isT);
 
   if (emptyCellsIndexes.length === 0) return tiles;
@@ -16,171 +23,118 @@ export const addRandomTile = (tiles: Tile[]): Tile[] => {
 
   const newTiles = [...tiles];
 
-  newTiles[randomCellIndex] = { ...newTiles[randomCellIndex], value: newValue };
+  newTiles[randomCellIndex.row][randomCellIndex.col] = newValue;
 
   return newTiles;
 };
 
-const mergeTile = (changedTiles: Tile[]) => (tile: Tile) => {
-  const populatedTile = changedTiles.find(
-    (changedTile) =>
-      changedTile.col === tile.col && changedTile.row === tile.row,
-  );
-  return populatedTile || tile;
-};
-
-const mergeHorizontal = (
-  tiles: Tile[],
+const merge = (
+  tiles: Tile[][],
   direction: Direction.LEFT | Direction.RIGHT,
-) => {
-  const changedTiles: Tile[] = [];
+): Tile[][] => {
+  let positionedTiles = tiles;
 
-  tiles.forEach((tile, tIndex) => {
-    const nearCol =
-      direction === Direction.LEFT
-        ? Math.max(0, tile.col - 1)
-        : Math.min(3, tile.col + 1);
-    const nearTile =
-      nearCol !== tile.col
-        ? tiles.find(
-            (cell, cIndex) =>
-              cell.row === tile.row &&
-              cell.col === nearCol &&
-              (Direction.LEFT === direction
-                ? cIndex < tIndex
-                : cIndex > tIndex),
-          )
-        : null;
-    if (nearTile && nearTile.value === tile.value && tile.value !== null) {
-      changedTiles.push({ ...nearTile, value: tile.value * 2 });
-      changedTiles.push({ ...tile, value: null });
-    }
-  });
+  if (direction === Direction.RIGHT) {
+    positionedTiles = tiles.map((row) => row.reverse());
+  }
 
-  return tiles.map(mergeTile(changedTiles));
-};
-const mergeVertical = (
-  tiles: Tile[],
-  direction: Direction.UP | Direction.DOWN,
-) => {
-  const changedTiles: Tile[] = [];
+  let newTiles = positionedTiles.map((row) =>
+    row.reduce<Tile[]>((acc: Tile[], tile: Tile, col: number): Tile[] => {
+      const changedTiles: ChangedTile[] = [];
 
-  tiles.forEach((tile, tIndex) => {
-    const nearRow =
-      direction === Direction.UP
-        ? Math.max(0, tile.row - 1)
-        : Math.min(3, tile.row + 1);
+      const nearCol = Math.max(0, col - 1);
 
-    const nearTile =
-      nearRow !== tile.row
-        ? tiles.find(
-            (cell, cIndex) =>
-              cell.col === tile.col &&
-              cell.row === nearRow &&
-              (Direction.UP === direction ? cIndex < tIndex : cIndex > tIndex),
-          )
-        : null;
+      const nearTile =
+        nearCol !== col ? acc.find((_, cellCol) => cellCol === nearCol) : null;
 
-    if (nearTile && tile.value && nearTile.value === tile.value) {
-      changedTiles.push({ ...nearTile, value: tile.value * 2 });
-      changedTiles.push({ ...tile, value: null });
-    }
-  });
+      if (nearTile === tile && tile !== null) {
+        changedTiles.push({ col: nearCol, value: tile * 2 });
+        changedTiles.push({ col: col, value: null });
+      }
 
-  return tiles.map(mergeTile(changedTiles));
+      return acc.map(updateTile(changedTiles));
+    }, row),
+  );
+
+  if (direction === Direction.RIGHT) {
+    newTiles = newTiles.map((row) => row.reverse());
+  }
+
+  return newTiles;
 };
 
-export const mergeTiles = (tiles: Tile[], direction: Direction): Tile[] => {
+export const mergeTiles = (tiles: Tile[][], direction: Direction): Tile[][] => {
   if (direction === Direction.LEFT || direction === Direction.RIGHT) {
-    return mergeHorizontal(tiles, direction);
+    return merge(tiles, direction);
   } else {
-    return mergeVertical(tiles, direction);
+    const transposedTiles = transpose(tiles);
+    const transposedDirection =
+      direction === Direction.UP ? Direction.LEFT : Direction.RIGHT;
+    const mergedTiles = merge(transposedTiles, transposedDirection);
+    return transpose(mergedTiles);
   }
 };
 
-const moveTile = (changedTiles: Tile[]) => (tile: Tile) => {
-  const populatedTile = changedTiles.find(
-    (changedTile) =>
-      changedTile.col === tile.col && changedTile.row === tile.row,
-  );
-  return populatedTile || { ...tile, value: null };
-};
+const updateTile =
+  (changedTiles: ChangedTile[]) => (tile: Tile, index: number) => {
+    const populatedTile = changedTiles.find(
+      (changedTile) => changedTile.col === index,
+    );
+    return populatedTile === undefined ? tile : populatedTile.value;
+  };
 
-const moveHorizontal = (
-  tiles: Tile[],
+const move = (
+  tiles: Tile[][],
   direction: Direction.LEFT | Direction.RIGHT,
-): Tile[] => {
-  const changedTiles: Tile[] = [];
+): Tile[][] => {
+  let positionedTiles = tiles;
 
-  tiles.forEach((tile, tIndex) => {
-    const emptyCellsLength = tiles.filter(
-      (cell, cIndex) =>
-        cell.row === tile.row &&
-        cell.value === null &&
-        // calc on empty cells which is before or after the tile in dependency of the direction
-        (Direction.LEFT === direction ? cIndex < tIndex : cIndex > tIndex),
-    ).length;
+  if (direction === Direction.RIGHT) {
+    positionedTiles = tiles.map((row) => row.reverse());
+  }
 
-    // if empty cells length is 0, do not move the tile
-    // else move the tile to the new col
-    const newCol =
-      emptyCellsLength === 0
-        ? tile.col
-        : direction === Direction.LEFT
-          ? Math.max(0, tile.col - emptyCellsLength)
-          : Math.min(3, tile.col + emptyCellsLength);
+  let newTiles = positionedTiles.map((row) =>
+    row.reduce((acc: Tile[], tile: Tile, col: number) => {
+      const changedTiles: ChangedTile[] = [];
+      const emptyCellsLength = acc.filter(
+        (cell, cellCol) =>
+          cell === null &&
+          // calc on empty cells which is before or after the tile in dependency of the direction
+          cellCol < col,
+      ).length;
 
-    const newTile = tiles.filter(
-      (cell) => cell.row === tile.row && cell.col === newCol,
-    )[0];
+      // if empty cells length is 0, do not move the tile
+      // else move the tile to the new col
+      const newCol =
+        emptyCellsLength === 0 ? col : Math.max(0, col - emptyCellsLength);
 
-    tile.value && changedTiles.push({ ...newTile, value: tile.value });
-  });
+      if (tile && col !== newCol) {
+        changedTiles.push({ col: newCol, value: tile });
+        changedTiles.push({ col: col, value: null });
+      }
 
-  console.log("🚀 ~ moveHorizontal ~ changedTiles:", changedTiles);
+      return acc.map(updateTile(changedTiles));
+    }, row),
+  );
 
-  return tiles.map(moveTile(changedTiles));
+  if (direction === Direction.RIGHT) {
+    newTiles = newTiles.map((row) => row.reverse());
+  }
+
+  return newTiles;
 };
 
-const moveVertical = (
-  tiles: Tile[],
-  direction: Direction.UP | Direction.DOWN,
-): Tile[] => {
-  const changedTiles: Tile[] = [];
-
-  tiles.forEach((tile, tIndex) => {
-    const emptyCellsLength = tiles.filter(
-      (cell, cIndex) =>
-        cell.col === tile.col &&
-        cell.value === null &&
-        // calc on empty cells which is before or after the tile in dependency of the direction
-        (Direction.UP === direction ? cIndex < tIndex : cIndex > tIndex),
-    ).length;
-
-    // if empty cells length is 0, do not move the tile
-    // else move the tile to the new row
-    const newRow =
-      emptyCellsLength === 0
-        ? tile.row
-        : direction === Direction.UP
-          ? Math.max(0, tile.row - emptyCellsLength)
-          : Math.min(3, tile.row + emptyCellsLength);
-    const newTile = tiles.filter(
-      (cell) => cell.col === tile.col && cell.row === newRow,
-    )[0];
-
-    tile.value && changedTiles.push({ ...newTile, value: tile.value });
-  });
-
-  console.log("🚀 ~ moveVertical ~ changedTiles:", changedTiles);
-
-  return tiles.map(moveTile(changedTiles));
-};
-
-export const moveTiles = (tiles: Tile[], direction: Direction): Tile[] => {
+export const moveTiles = (tiles: Tile[][], direction: Direction): Tile[][] => {
   if (direction === Direction.LEFT || direction === Direction.RIGHT) {
-    return moveHorizontal(tiles, direction);
+    return move(tiles, direction);
   } else {
-    return moveVertical(tiles, direction);
+    const transposedTiles = transpose(tiles);
+    const transposedDirection =
+      direction === Direction.UP ? Direction.LEFT : Direction.RIGHT;
+    const movedTiles = move(transposedTiles, transposedDirection);
+    return transpose(movedTiles);
   }
 };
+
+const transpose = (arr: Tile[][]) =>
+  arr[0].map((_, i) => arr.map((row) => row[i]));
