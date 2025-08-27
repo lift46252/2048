@@ -6,7 +6,7 @@ import GestureRecognizer from "react-native-swipe-gestures";
 import { Tile as TileC } from "./Tile";
 import { addRandomTile, mergeTiles, moveTiles } from "./utils";
 
-interface GameBoardProps {
+interface BoardProps {
   tiles: Tile[][];
   score: number;
   bestScore: number;
@@ -14,7 +14,7 @@ interface GameBoardProps {
   onScoreChange: (newScore: number) => void;
 }
 
-export const GameBoard: React.FC<GameBoardProps> = ({
+export const Board: React.FC<BoardProps> = ({
   tiles,
   score,
   bestScore,
@@ -39,7 +39,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       onTilesChange(newTiles);
       onScoreChange(newScore);
     },
-    [tiles, onTilesChange],
+    [tiles, onTilesChange, onScoreChange],
   );
 
   const backgroundColor = useThemeColor({}, "background");
@@ -77,9 +77,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         }}
       >
         <View style={styles.board}>
-          {tiles.map((rowTiles, row) =>
-            rowTiles.map((tile, col) => (
-              <TileC key={`${row}-${col}`} tile={tile} row={row} col={col} />
+          {tiles.flatMap((row, rowIndex) =>
+            row.map((tile, colIndex) => (
+              <TileC key={tile.id} tile={tile} row={rowIndex} col={colIndex} />
             )),
           )}
         </View>
