@@ -1,10 +1,10 @@
+import { Direction, Tile } from "@/components/types";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React, { useCallback } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Tile as TileC } from "./Tile";
-import { moveTiles, addRandomTile, mergeTiles } from "./utils";
-import { Tile, Direction } from "@/components/types";
 import GestureRecognizer from "react-native-swipe-gestures";
+import { Tile as TileC } from "./Tile";
+import { addRandomTile, mergeTiles, moveTiles } from "./utils";
 
 interface GameBoardProps {
   tiles: Tile[][];
@@ -32,7 +32,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       const newTiles = addRandomTile(mergedTiles);
       const newScore = newTiles.reduce<number>(
         (acc, row) =>
-          acc + row.reduce<number>((acc, tile) => acc + (tile || 0), 0),
+          acc + row.reduce<number>((acc, tile) => acc + (tile.value || 0), 0),
         0,
       );
 
@@ -79,12 +79,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         <View style={styles.board}>
           {tiles.map((rowTiles, row) =>
             rowTiles.map((tile, col) => (
-              <TileC
-                key={`${row}-${col}`}
-                value={tile}
-                row={row}
-                col={col}
-              />
+              <TileC key={`${row}-${col}`} tile={tile} row={row} col={col} />
             )),
           )}
         </View>

@@ -1,17 +1,22 @@
-import React, { useMemo } from "react";
-import { Text, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTileColor } from "@/hooks/useTileColor";
-import Animated from "react-native-reanimated";
+import React, { useMemo } from "react";
+import { StyleSheet, Text } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  withSequence,
+  withSpring,
+} from "react-native-reanimated";
+import { Tile as TileType } from "./types";
 
 interface TileProps {
-  value: number | null;
+  tile: TileType;
   row: number;
   col: number;
 }
 
-export const Tile: React.FC<TileProps> = ({ value, row, col }) => {
+export const Tile: React.FC<TileProps> = ({ tile, row, col }) => {
+  const { value, isNew } = tile;
   const darkTextColor = useThemeColor({}, "darkText");
   const lightTextColor = useThemeColor({}, "lightText");
   const backgroundColor = useTileColor(value);
@@ -28,6 +33,17 @@ export const Tile: React.FC<TileProps> = ({ value, row, col }) => {
     [row, col],
   );
 
+  const textAnimatedStyles = useAnimatedStyle(
+    () => ({
+      fontSize: isNew
+        ? withSequence(withSpring(36), withSpring(32))
+        : value
+          ? 32
+          : 0,
+    }),
+    [isNew, value],
+  );
+
   return (
     <Animated.View
       style={[
@@ -39,7 +55,11 @@ export const Tile: React.FC<TileProps> = ({ value, row, col }) => {
         animatedStyles,
       ]}
     >
-      {value && <Text style={[styles.tileText, { color }]}>{value}</Text>}
+      {value && (
+        <Animated.Text style={[styles.tileText, { color }, textAnimatedStyles]}>
+          {value}
+        </Animated.Text>
+      )}
     </Animated.View>
   );
 };

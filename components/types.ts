@@ -1,13 +1,14 @@
-export type Tile = number | null;
+export interface Tile {
+  value: number | null;
+  isNew?: boolean;
+}
 
 export interface EmptyTilePosition {
   row: number;
   col: number;
 }
 
-export interface ChangedTile extends Omit<EmptyTilePosition, "row"> {
-  value: Tile;
-}
+export type ChangedTile = Omit<EmptyTilePosition, "row"> & Tile;
 
 export enum Direction {
   LEFT = "SWIPE_LEFT",
