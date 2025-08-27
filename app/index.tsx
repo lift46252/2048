@@ -1,6 +1,6 @@
 import { GameBoard } from "@/components/GameBoard";
-import { useState } from "react";
 import { Tile } from "@/components/types";
+import { useState } from "react";
 
 import React from "react";
 
@@ -8,10 +8,10 @@ const index = () => {
   const [score, setScore] = useState<number>(0);
   const [bestScore, setBestScore] = useState<number>(0);
   const [tiles, setTiles] = useState<Tile[][]>([
-    [2, 4, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
+    [{ value: 2 }, { value: 4 }, { value: null }, { value: null }],
+    [{ value: null }, { value: null }, { value: null }, { value: null }],
+    [{ value: null }, { value: null }, { value: null }, { value: null }],
+    [{ value: null }, { value: null }, { value: null }, { value: null }],
   ]);
 
   return (
