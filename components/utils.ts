@@ -11,7 +11,7 @@ export const addRandomTile = (tiles: Tile[][]): Tile[][] => {
   const emptyCellsIndexes: EmptyTilePosition[] = tiles
     .reduce<
       EmptyTilePosition[]
-    >((acc, row, index) => [...acc, ...row.map((cell, col) => (cell.value === null ? { row: index, col: col } : undefined)).filter(isT)], [])
+    >((acc, row, index) => [...acc, ...row.map((cell, col) => (cell.value === undefined ? { row: index, col: col } : undefined)).filter(isT)], [])
     .filter(isT);
 
   if (emptyCellsIndexes.length === 0) return tiles;
@@ -51,15 +51,17 @@ const merge = (
       const nearCol = Math.max(0, col - 1);
 
       const nearTile =
-        nearCol !== col ? acc.find((_, cellCol) => cellCol === nearCol) : null;
+        nearCol !== col
+          ? acc.find((_, cellCol) => cellCol === nearCol)
+          : undefined;
 
-      if (nearTile?.value === tile.value && tile.value !== null) {
+      if (nearTile && nearTile.value === tile.value && tile.value) {
         changedTiles.push({
           col: nearCol,
-          value: tile.value ? tile.value * 2 : null,
+          value: tile.value * 2,
           id: tile.id,
         });
-        changedTiles.push({ col: col, value: null, id: nearTile.id });
+        changedTiles.push({ col: col, value: undefined, id: nearTile.id });
       }
 
       return acc.map(updateTile(changedTiles));
@@ -114,7 +116,7 @@ const move = (
       const changedTiles: ChangedTile[] = [];
       const emptyCellsLength = acc.filter(
         (cell, cellCol) =>
-          cell.value === null &&
+          cell.value === undefined &&
           // calc on empty cells which is before or after the tile
           cellCol < col,
       ).length;
@@ -127,7 +129,7 @@ const move = (
 
       if (tile.value && col !== newCol) {
         changedTiles.push({ col: newCol, value: tile.value, id: tile.id });
-        changedTiles.push({ col: col, value: null, id: newTileId });
+        changedTiles.push({ col: col, value: undefined, id: newTileId });
       }
 
       return acc.map(updateTile(changedTiles));

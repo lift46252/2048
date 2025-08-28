@@ -1,6 +1,6 @@
 export interface Tile {
   id: string;
-  value: number | null;
+  value?: number;
   isNew?: boolean;
 }
 
