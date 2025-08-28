@@ -11,6 +11,7 @@ export default function StartScreen() {
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
+        
         <Text style={[styles.title, { color: scoreValueColor }]}>2048</Text>
         <Text style={[styles.subtitle, { color: scoreValueColor }]}>
           Join the numbers and get to the 2048 tile!

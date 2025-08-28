@@ -34,7 +34,8 @@ export const Board: React.FC<BoardProps> = ({
       const finalTiles = moveTiles(mergedTiles, direction);
 
       if (JSON.stringify(finalTiles) === JSON.stringify(tiles)) {
-        onGameOver();
+        finalTiles.flat().filter((tile) => tile.value === undefined).length === 0 && onGameOver();
+        return;
       };
       const newTiles = addRandomTile(finalTiles);
       const newScore = newTiles.reduce<number>(

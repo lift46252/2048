@@ -32,7 +32,7 @@ export const Tile: React.FC<TileProps> = ({ tile, row, col }) => {
         ? withSequence(withSpring(36), withSpring(32))
         : value
           ? 32
-          : 0,
+          : 1,
     }),
     [isNew, value],
   );
