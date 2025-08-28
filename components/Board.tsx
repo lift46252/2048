@@ -13,6 +13,7 @@ interface BoardProps {
   onTilesChange: (newTiles: Tile[][]) => void;
   onScoreChange: (newScore: number) => void;
   onBestScoreChange: (newBestScore: number) => void;
+  onGameOver: VoidFunction;
 }
 
 export const Board: React.FC<BoardProps> = ({
@@ -22,6 +23,7 @@ export const Board: React.FC<BoardProps> = ({
   onTilesChange,
   onScoreChange,
   onBestScoreChange,
+  onGameOver,
 }) => {
   const handleSwipe = useCallback(
     (direction: Direction) => {
@@ -31,7 +33,9 @@ export const Board: React.FC<BoardProps> = ({
       const mergedTiles = mergeTiles(repositionedTiles, direction);
       const finalTiles = moveTiles(mergedTiles, direction);
 
-      if (JSON.stringify(finalTiles) === JSON.stringify(tiles)) return;
+      if (JSON.stringify(finalTiles) === JSON.stringify(tiles)) {
+        onGameOver();
+      };
       const newTiles = addRandomTile(finalTiles);
       const newScore = newTiles.reduce<number>(
         (acc, row) =>
