@@ -1,3 +1,4 @@
+import { Button } from "@/components/Button";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Link } from "expo-router";
 import React from "react";
@@ -16,13 +17,7 @@ export default function StartScreen() {
         </Text>
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Link href="/game" asChild>
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>New Game</Text>
-          </Pressable>
-        </Link>
-      </View>
+      <Button href="/game">New Game</Button>
     </View>
   );
 }
