@@ -1,11 +1,12 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useTileColor } from "@/hooks/useTileColor";
 import React, { useMemo } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withSequence,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { Tile as TileType } from "./types";
 
@@ -22,15 +23,7 @@ export const Tile: React.FC<TileProps> = ({ tile, row, col }) => {
   const backgroundColor = useTileColor(value);
   const color = useMemo(
     () => (value && value > 4 ? darkTextColor : lightTextColor),
-    [value],
-  );
-
-  const animatedStyles = useAnimatedStyle(
-    () => ({
-      top: withSpring(row * 90),
-      left: withSpring(col * 90),
-    }),
-    [row, col],
+    [value, darkTextColor, lightTextColor],
   );
 
   const textAnimatedStyles = useAnimatedStyle(
@@ -44,15 +37,20 @@ export const Tile: React.FC<TileProps> = ({ tile, row, col }) => {
     [isNew, value],
   );
 
+  const tileAnimatedStyles = useAnimatedStyle(() => ({
+    top: value ? withTiming(row * 90, { duration: 300 }) : row * 90,
+    left: value ? withTiming(col * 90, { duration: 300 }) : col * 90,
+  }));
+
   return (
     <Animated.View
       style={[
         {
           backgroundColor,
-          position: "absolute",
+          zIndex: value ?? 0,
         },
         styles.tile,
-        animatedStyles,
+        tileAnimatedStyles,
       ]}
     >
       {value && (
@@ -67,6 +65,7 @@ export const Tile: React.FC<TileProps> = ({ tile, row, col }) => {
 const styles = StyleSheet.create({
   tile: {
     userSelect: "none",
+    position: "absolute",
     width: 80,
     height: 80,
     borderRadius: 8,

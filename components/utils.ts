@@ -28,6 +28,7 @@ export const addRandomTile = (tiles: Tile[][]): Tile[][] => {
   newTiles[randomCellIndex.row][randomCellIndex.col] = {
     value: newValue,
     isNew: true,
+    id: newTiles[randomCellIndex.row][randomCellIndex.col].id,
   };
 
   return newTiles;
@@ -56,8 +57,9 @@ const merge = (
         changedTiles.push({
           col: nearCol,
           value: tile.value ? tile.value * 2 : null,
+          id: tile.id,
         });
-        changedTiles.push({ col: col, value: null });
+        changedTiles.push({ col: col, value: null, id: nearTile.id });
       }
 
       return acc.map(updateTile(changedTiles));
@@ -88,7 +90,13 @@ const updateTile =
     const populatedTile = changedTiles.find(
       (changedTile) => changedTile.col === index,
     );
-    return populatedTile === undefined ? tile : populatedTile;
+    return populatedTile === undefined
+      ? tile
+      : {
+          id: populatedTile.id,
+          value: populatedTile.value,
+          isNew: populatedTile.isNew,
+        };
   };
 
 const move = (
@@ -107,7 +115,7 @@ const move = (
       const emptyCellsLength = acc.filter(
         (cell, cellCol) =>
           cell.value === null &&
-          // calc on empty cells which is before or after the tile in dependency of the direction
+          // calc on empty cells which is before or after the tile
           cellCol < col,
       ).length;
 
@@ -115,10 +123,11 @@ const move = (
       // else move the tile to the new col
       const newCol =
         emptyCellsLength === 0 ? col : Math.max(0, col - emptyCellsLength);
+      const newTileId = acc[newCol].id;
 
       if (tile.value && col !== newCol) {
-        changedTiles.push({ col: newCol, value: tile.value });
-        changedTiles.push({ col: col, value: null });
+        changedTiles.push({ col: newCol, value: tile.value, id: tile.id });
+        changedTiles.push({ col: col, value: null, id: newTileId });
       }
 
       return acc.map(updateTile(changedTiles));
