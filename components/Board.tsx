@@ -27,9 +27,10 @@ export const Board: React.FC<BoardProps> = ({
 
       const repositionedTiles = moveTiles(tiles, direction);
       const mergedTiles = mergeTiles(repositionedTiles, direction);
+      const finalTiles = moveTiles(mergedTiles, direction);
 
-      if (JSON.stringify(mergedTiles) === JSON.stringify(tiles)) return;
-      const newTiles = addRandomTile(mergedTiles);
+      if (JSON.stringify(finalTiles) === JSON.stringify(tiles)) return;
+      const newTiles = addRandomTile(finalTiles);
       const newScore = newTiles.reduce<number>(
         (acc, row) =>
           acc + row.reduce<number>((acc, tile) => acc + (tile.value || 0), 0),

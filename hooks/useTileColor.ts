@@ -1,6 +1,6 @@
 import { useThemeColor } from "./useThemeColor";
 
-export const useTileColor = (value: number | null) => {
+export const useTileColor = (value?: number) => {
   const emptyTileColor = useThemeColor({}, "emptyTile");
   const tileDefaultColor = useThemeColor({}, "tileDefault");
   const tile2Color = useThemeColor({}, "tile2");
