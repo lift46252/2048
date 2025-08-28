@@ -12,6 +12,7 @@ interface BoardProps {
   bestScore: number;
   onTilesChange: (newTiles: Tile[][]) => void;
   onScoreChange: (newScore: number) => void;
+  onBestScoreChange: (newBestScore: number) => void;
 }
 
 export const Board: React.FC<BoardProps> = ({
@@ -20,6 +21,7 @@ export const Board: React.FC<BoardProps> = ({
   bestScore,
   onTilesChange,
   onScoreChange,
+  onBestScoreChange,
 }) => {
   const handleSwipe = useCallback(
     (direction: Direction) => {
@@ -39,8 +41,12 @@ export const Board: React.FC<BoardProps> = ({
 
       onTilesChange(newTiles);
       onScoreChange(newScore);
+
+      if (newScore > bestScore) {
+        onBestScoreChange(newScore);
+      }
     },
-    [tiles, onTilesChange, onScoreChange],
+    [tiles, onTilesChange, onScoreChange,onBestScoreChange],
   );
 
   const backgroundColor = useThemeColor({}, "background");

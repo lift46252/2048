@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useAsyncStorage } from "@react-native-async-storage/async-storage";
+import { useCallback, useEffect, useState } from "react";
 import { Board } from "./Board";
 import { Tile } from "./types";
 import { addRandomTile } from "./utils";
 
 export const Game = () => {
+  const { getItem, setItem } = useAsyncStorage("bestScore");
   const [score, setScore] = useState<number>(0);
   const [bestScore, setBestScore] = useState<number>(0);
   const [tiles, setTiles] = useState<Tile[][]>(
@@ -17,6 +19,29 @@ export const Game = () => {
     ),
   );
 
+  const readBestScore = async () => {
+    const bestScore = await getItem();
+    if (bestScore) {
+      setBestScore(Number(bestScore));
+    }
+  };
+
+  useEffect(() => {
+    readBestScore();
+  }, []);
+
+  const writeBestScore = async (newBestScore: number) => {
+    await setItem(newBestScore.toString());
+  };
+
+  const handleBestScoreChange = useCallback(
+    async (newBestScore: number) => {
+      setBestScore(newBestScore);
+      await writeBestScore(newBestScore);
+    },
+    [setBestScore, writeBestScore],
+  );
+
   return (
     <Board
       tiles={tiles}
@@ -24,6 +49,7 @@ export const Game = () => {
       bestScore={bestScore}
       onTilesChange={setTiles}
       onScoreChange={setScore}
+      onBestScoreChange={handleBestScoreChange}
     />
   );
 };
