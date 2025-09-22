@@ -1,0 +1,62 @@
+{
+  "1": {
+    "moves": 20,
+    "missions": [
+      {
+        "type": "reach_tile",
+        "title": "Reach 2048",
+        "goal": 2048
+      }
+    ]
+  },
+  "2": {
+    "moves": 25,
+    "missions": [
+      {
+        "type": "reach_tile",
+        "title": "Reach 4096",
+        "goal": 4096
+      }
+    ]
+  },
+  "3": {
+    "moves": 30,
+    "missions": [
+      {
+        "type": "reach_tile",
+        "title": "Reach 8192",
+        "goal": 8192
+      }
+    ]
+  },
+  "4": {
+    "moves": 35,
+    "missions": [
+      {
+        "type": "reach_tile",
+        "title": "Reach 16384",
+        "goal": 16384
+      }
+    ]
+  },
+  "5": {
+    "moves": 40,
+    "missions": [
+      {
+        "type": "reach_tile",
+        "title": "Reach 32768",
+        "goal": 32768
+      }
+    ]
+  },
+  "6": {
+    "moves": 45,
+    "missions": [
+      {
+        "type": "reach_tile",
+        "title": "Reach 65536",
+        "goal": 65536
+      }
+    ]
+  }
+}

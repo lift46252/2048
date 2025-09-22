@@ -16,26 +16,7 @@ export default function StartScreen() {
         </Text>
       </View>
 
-      <Link
-        path="/level"
-        params={{
-          moves: 20,
-          missions: JSON.stringify([
-            {
-              type: "reach_tile" as const,
-              title: "Reach 2048",
-              goal: 2048,
-            },
-            {
-              type: "score_target" as const,
-              title: "Score 1000+",
-              goal: 1000,
-            },
-          ]),
-        }}
-      >
-        New Level
-      </Link>
+      <Link path="/levels">Play</Link>
     </View>
   );
 }

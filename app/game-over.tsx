@@ -5,7 +5,10 @@ import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function GameOver() {
-  const { score } = useLocalSearchParams<{ score: string }>();
+  const { score, levelId } = useLocalSearchParams<{
+    score: string;
+    levelId: string;
+  }>();
   const textColor = useThemeColor({}, "lightText");
 
   return (
@@ -15,9 +18,7 @@ export default function GameOver() {
         Your Score: {score || 0}
       </Text>
 
-      <Link path="/level" params={{ moves: 20 }}>
-        New Game
-      </Link>
+      <Link path={`/levels/${levelId || 1}`}>Retry</Link>
 
       <Space spacing={16} />
 
