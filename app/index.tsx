@@ -1,8 +1,7 @@
 import { Button } from "@/components/Button";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { Link } from "expo-router";
 import React from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function StartScreen() {
   const backgroundColor = useThemeColor({}, "background");
@@ -18,7 +17,7 @@ export default function StartScreen() {
         </Text>
       </View>
 
-      <Button href="/game">New Game</Button>
+      <Button href="/level?moves=20">New Level</Button>
     </View>
   );
 }
