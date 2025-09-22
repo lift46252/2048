@@ -17,3 +17,8 @@ export enum Direction {
   UP = "SWIPE_UP",
   DOWN = "SWIPE_DOWN",
 }
+
+export interface Mission {
+  title: string;
+  fn: (tiles: Tile[][], score: number, moves: number) => number; // returns remaining count
+}

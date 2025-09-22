@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Button } from '@/components/Button';
-import { Space } from '@/components/Space';
+import { Link } from "@/components/Link";
+import { Space } from "@/components/Space";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useLocalSearchParams } from "expo-router";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function GameOver() {
   const { score } = useLocalSearchParams<{ score: string }>();
@@ -11,13 +11,17 @@ export default function GameOver() {
   return (
     <View style={styles.container}>
       <Text style={[styles.title, { color: textColor }]}>Game Over!</Text>
-      <Text style={[styles.score, { color: textColor }]}>Your Score: {score || 0}</Text>
-      
-      <Button href="/level?moves=20">New Game</Button>
+      <Text style={[styles.score, { color: textColor }]}>
+        Your Score: {score || 0}
+      </Text>
+
+      <Link path="/level" params={{ moves: 20 }}>
+        New Game
+      </Link>
 
       <Space spacing={16} />
 
-      <Button href="/">Home</Button>
+      <Link path="/">Home</Link>
     </View>
   );
 }
@@ -25,13 +29,13 @@ export default function GameOver() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 36,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   score: {
@@ -44,8 +48,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
