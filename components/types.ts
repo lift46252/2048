@@ -22,3 +22,14 @@ export interface Mission {
   title: string;
   fn: (tiles: Tile[][], score: number, moves: number) => number; // returns remaining count
 }
+
+export interface LevelMission {
+  type: "reach_tile" | "score_target";
+  title: string;
+  goal: number;
+}
+
+export interface LevelConfig {
+  moves: number;
+  missions: LevelMission[];
+}
