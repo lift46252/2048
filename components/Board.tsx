@@ -9,20 +9,20 @@ import { addRandomTile, mergeTiles, moveTiles } from "./utils";
 interface BoardProps {
   tiles: Tile[][];
   score: number;
-  bestScore: number;
+  moves: number;
   onTilesChange: (newTiles: Tile[][]) => void;
   onScoreChange: (newScore: number) => void;
-  onBestScoreChange: (newBestScore: number) => void;
+  onMovesChange: (newMoves: number) => void;
   onGameOver: VoidFunction;
 }
 
 export const Board: React.FC<BoardProps> = ({
   tiles,
   score,
-  bestScore,
+  moves,
   onTilesChange,
   onScoreChange,
-  onBestScoreChange,
+  onMovesChange,
   onGameOver,
 }) => {
   const handleSwipe = useCallback(
@@ -37,6 +37,10 @@ export const Board: React.FC<BoardProps> = ({
         finalTiles.flat().filter((tile) => tile.value === undefined).length === 0 && onGameOver();
         return;
       };
+      
+      // Count down moves on every swipe
+      onMovesChange(moves - 1);
+      
       const newTiles = addRandomTile(finalTiles);
       const newScore = newTiles.reduce<number>(
         (acc, row) =>
@@ -46,12 +50,8 @@ export const Board: React.FC<BoardProps> = ({
 
       onTilesChange(newTiles);
       onScoreChange(newScore);
-
-      if (newScore > bestScore) {
-        onBestScoreChange(newScore);
-      }
     },
-    [tiles, onTilesChange, onScoreChange,onBestScoreChange],
+    [tiles, moves, onTilesChange, onScoreChange, onMovesChange, onGameOver],
   );
 
   const backgroundColor = useThemeColor({}, "background");
@@ -76,8 +76,8 @@ export const Board: React.FC<BoardProps> = ({
           <Text style={styles.scoreValue}>{score}</Text>
         </View>
         <View style={styles.scoreBox}>
-          <Text style={styles.scoreLabel}>Best</Text>
-          <Text style={styles.scoreValue}>{bestScore}</Text>
+          <Text style={styles.scoreLabel}>Moves</Text>
+          <Text style={styles.scoreValue}>{moves}</Text>
         </View>
       </View>
 

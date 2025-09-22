@@ -13,7 +13,7 @@ export default function GameOver() {
       <Text style={[styles.title, { color: textColor }]}>Game Over!</Text>
       <Text style={[styles.score, { color: textColor }]}>Your Score: {score || 0}</Text>
       
-      <Button href="/game">New Game</Button>
+      <Button href="/level?moves=20">New Game</Button>
 
       <Space spacing={16} />
 
