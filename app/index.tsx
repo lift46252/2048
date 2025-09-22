@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Link } from "@/components/Link";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -10,14 +10,32 @@ export default function StartScreen() {
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
-        
         <Text style={[styles.title, { color: scoreValueColor }]}>2048</Text>
         <Text style={[styles.subtitle, { color: scoreValueColor }]}>
           Join the numbers and get to the 2048 tile!
         </Text>
       </View>
 
-      <Button href="/level?moves=20">New Level</Button>
+      <Link
+        path="/level"
+        params={{
+          moves: 20,
+          missions: JSON.stringify([
+            {
+              type: "reach_tile" as const,
+              title: "Reach 2048",
+              goal: 2048,
+            },
+            {
+              type: "score_target" as const,
+              title: "Score 1000+",
+              goal: 1000,
+            },
+          ]),
+        }}
+      >
+        New Level
+      </Link>
     </View>
   );
 }

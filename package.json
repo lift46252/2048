@@ -12,7 +12,10 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "prettier:write": "prettier --write .",
-    "prettier:check": "prettier --check ."
+    "prettier:check": "prettier --check .",
+    "tsc": "tsc --noEmit",
+    "tsc:watch": "tsc --noEmit --watch",
+    "check": "npm run tsc && npm run lint && npm run prettier:check"
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
