@@ -2,10 +2,14 @@ import { Link } from "@/components/Link";
 import { Space } from "@/components/Space";
 import { useCoins } from "@/contexts/coins/hooks";
 import { calculateCoinsFromScore } from "@/contexts/coins/utils";
+import { useLives } from "@/contexts/lives/hooks";
+import { canPlay } from "@/contexts/lives/utils";
+import { useShop } from "@/contexts/shop/Context";
+import { useToast } from "@/contexts/toast/Context";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function GameOver() {
   const { score, levelId } = useLocalSearchParams<{
@@ -16,6 +20,9 @@ export default function GameOver() {
   const textColor = useThemeColor({}, "lightText");
   const scoreValue = parseInt(score || "0", 10);
   const { addCoins } = useCoins();
+  const { spendLife, currentLives, infiniteUntil } = useLives();
+  const { openShop } = useShop();
+  const { showToast } = useToast();
   const coinsEarned = calculateCoinsFromScore(scoreValue);
 
   useEffect(() => {
@@ -23,6 +30,19 @@ export default function GameOver() {
       addCoins(coinsEarned);
     }
   }, [coinsEarned, addCoins]);
+
+  useEffect(() => {
+    spendLife();
+  }, [spendLife]);
+
+  const handleRetry = () => {
+    if (!canPlay(currentLives, infiniteUntil)) {
+      showToast("You don't have enough lives.", "error");
+      openShop("lives"); // Open shop to lives tab
+      return;
+    }
+    router.push(`/levels/${levelId || 1}`);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -37,7 +57,9 @@ export default function GameOver() {
         </Text>
       )}
 
-      <Link path={`/levels/${levelId || 1}`}>Retry</Link>
+      <Pressable style={styles.retryButton} onPress={handleRetry}>
+        <Text style={styles.retryButtonText}>Retry</Text>
+      </Pressable>
 
       <Space spacing={16} />
 
@@ -77,5 +99,18 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "600",
+  },
+  retryButton: {
+    backgroundColor: "#8f7a66",
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    width: "70%",
+    alignItems: "center",
+  },
+  retryButtonText: {
+    color: "#f9f6f2",
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });
