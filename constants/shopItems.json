@@ -1,0 +1,30 @@
+[
+  {
+    "id": "extra-moves",
+    "title": "Extra Moves",
+    "description": "+5 moves for next game",
+    "price": 50,
+    "available": true
+  },
+  {
+    "id": "power-up",
+    "title": "Power-up",
+    "description": "Start with a 4 tile",
+    "price": 100,
+    "available": true
+  },
+  {
+    "id": "double-score",
+    "title": "Double Score",
+    "description": "Double your score for this game",
+    "price": 75,
+    "available": false
+  },
+  {
+    "id": "undo-move",
+    "title": "Undo Move",
+    "description": "Undo your last move",
+    "price": 25,
+    "available": true
+  }
+]
