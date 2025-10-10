@@ -4,27 +4,47 @@
     "title": "Extra Moves",
     "description": "+5 moves for next game",
     "price": 50,
-    "available": true
+    "available": true,
+    "category": "coins"
   },
   {
     "id": "power-up",
     "title": "Power-up",
     "description": "Start with a 4 tile",
     "price": 100,
-    "available": true
+    "available": true,
+    "category": "coins"
   },
   {
     "id": "double-score",
     "title": "Double Score",
     "description": "Double your score for this game",
     "price": 75,
-    "available": false
+    "available": false,
+    "category": "coins"
   },
   {
-    "id": "undo-move",
-    "title": "Undo Move",
-    "description": "Undo your last move",
-    "price": 25,
-    "available": true
+    "id": "life-pack-small",
+    "title": "Small Life Pack",
+    "description": "+1 life",
+    "price": 30,
+    "available": true,
+    "category": "lives"
+  },
+  {
+    "id": "life-pack-big",
+    "title": "Big Life Pack",
+    "description": "+5 lives",
+    "price": 120,
+    "available": true,
+    "category": "lives"
+  },
+  {
+    "id": "infinite-lives-10min",
+    "title": "Infinite Lives",
+    "description": "Unlimited lives for 10 minutes",
+    "price": 200,
+    "available": true,
+    "category": "lives"
   }
 ]

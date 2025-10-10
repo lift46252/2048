@@ -1,6 +1,10 @@
-import { CoinsBar } from "@/components/CoinsBar";
+import { ShopModal } from "@/components/ShopModal";
+import { StatusBar as GameStatusBar } from "@/components/StatusBar";
 import { CoinsProvider } from "@/contexts/coins/Context";
 import { useCoins } from "@/contexts/coins/hooks";
+import { LivesProvider } from "@/contexts/lives/Context";
+import { ShopProvider, useShop } from "@/contexts/shop/Context";
+import { ToastProvider } from "@/contexts/toast/Context";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   DarkTheme,
@@ -15,6 +19,7 @@ import { View } from "react-native";
 function AppContent() {
   const colorScheme = useColorScheme();
   const { coins, isLoading } = useCoins();
+  const { isOpen, closeShop } = useShop();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -28,9 +33,10 @@ function AppContent() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <StatusBar style="auto" />
       <View style={{ flex: 1 }}>
-        <CoinsBar coins={isLoading ? 0 : coins} />
+        <GameStatusBar coins={isLoading ? 0 : coins} />
         <Slot />
       </View>
+      <ShopModal visible={isOpen} onClose={closeShop} />
     </ThemeProvider>
   );
 }
@@ -38,7 +44,13 @@ function AppContent() {
 export default function RootLayout() {
   return (
     <CoinsProvider>
-      <AppContent />
+      <LivesProvider>
+        <ShopProvider>
+          <ToastProvider>
+            <AppContent />
+          </ToastProvider>
+        </ShopProvider>
+      </LivesProvider>
     </CoinsProvider>
   );
 }

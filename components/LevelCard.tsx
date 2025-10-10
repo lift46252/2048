@@ -1,3 +1,7 @@
+import { useLives } from "@/contexts/lives/hooks";
+import { canPlay } from "@/contexts/lives/utils";
+import { useShop } from "@/contexts/shop/Context";
+import { useToast } from "@/contexts/toast/Context";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router } from "expo-router";
 import React from "react";
@@ -14,11 +18,19 @@ export const LevelCard = ({ levelNumber, stars, isLocked }: LevelCardProps) => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const borderColor = useThemeColor({}, "text");
+  const { currentLives, infiniteUntil } = useLives();
+  const { openShop } = useShop();
+  const { showToast } = useToast();
 
   const handlePress = () => {
-    if (!isLocked) {
-      router.push(`/levels/${levelNumber}`);
+    if (isLocked) return;
+    if (!canPlay(currentLives, infiniteUntil)) {
+      // Notify and open shop
+      showToast("You don't have enough lives.", "error");
+      openShop("lives");
+      return;
     }
+    router.push(`/levels/${levelNumber}`);
   };
 
   return (

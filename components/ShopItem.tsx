@@ -1,6 +1,6 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface ShopItemProps {
   title: string;
@@ -20,12 +20,14 @@ export const ShopItem: React.FC<ShopItemProps> = ({
   const textColor = useThemeColor({}, "lightText");
 
   return (
-    <View
+    <TouchableOpacity
       style={[
         styles.shopItem,
         { backgroundColor: textColor + "20" },
         disabled && styles.disabled,
       ]}
+      onPress={onPress}
+      disabled={disabled}
     >
       <Text style={[styles.itemTitle, { color: textColor }]}>{title}</Text>
       <Text style={[styles.itemDescription, { color: textColor }]}>
@@ -34,7 +36,7 @@ export const ShopItem: React.FC<ShopItemProps> = ({
       <Text style={[styles.itemPrice, { color: textColor }]}>
         {price} coins
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
