@@ -20,31 +20,23 @@
     "title": "Double Score",
     "description": "Double your score for this game",
     "price": 75,
-    "available": false,
+    "available": true,
     "category": "coins"
   },
   {
-    "id": "life-pack-small",
-    "title": "Small Life Pack",
-    "description": "+1 life",
-    "price": 30,
+    "id": "undo-move",
+    "title": "Undo Move",
+    "description": "Undo your last move",
+    "price": 25,
     "available": true,
-    "category": "lives"
+    "category": "coins"
   },
   {
-    "id": "life-pack-big",
-    "title": "Big Life Pack",
-    "description": "+5 lives",
-    "price": 120,
+    "id": "shuffle-board",
+    "title": "Shuffle Board",
+    "description": "Shuffle the current board",
+    "price": 40,
     "available": true,
-    "category": "lives"
-  },
-  {
-    "id": "infinite-lives-10min",
-    "title": "Infinite Lives",
-    "description": "Unlimited lives for 10 minutes",
-    "price": 200,
-    "available": true,
-    "category": "lives"
+    "category": "coins"
   }
 ]

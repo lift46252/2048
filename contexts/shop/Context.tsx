@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
-type ShopTab = "coins" | "lives";
+type ShopTab = "upgrades" | "coins" | "lives";
 
 interface ShopContextType {
   isOpen: boolean;
@@ -15,7 +15,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<ShopTab>("coins");
+  const [activeTab, setActiveTab] = useState<ShopTab>("upgrades");
 
   const value = useMemo<ShopContextType>(
     () => ({
